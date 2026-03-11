@@ -39,10 +39,13 @@ public class CategoriaService {
     @Transactional
     public Categoria actualizar(Categoria categoria) {
         Categoria categoriaActual = categoriaRepository.findById(categoria.getIdCategoria())
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         categoriaActual.setNombre(categoria.getNombre());
         categoriaActual.setDescripcion(categoria.getDescripcion());
+
+        // AQUI FALTABA GUARDAR LA IMAGEN
+        categoriaActual.setRutaImagen(categoria.getRutaImagen());
 
         return categoriaRepository.save(categoriaActual);
     }

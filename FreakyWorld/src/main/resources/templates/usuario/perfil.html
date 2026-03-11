@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/layout :: head('Mi perfil')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="perfil-seccion">
+                <div class="perfil-caja">
+                    <h1>Mi perfil</h1>
+                    <p class="perfil-subtexto">Consulta y actualiza la información de tu cuenta.</p>
+
+                    <div th:if="${exito != null}" class="mensaje-exito">
+                        <p th:text="${exito}">Operación realizada correctamente.</p>
+                    </div>
+
+                    <div th:if="${error != null}" class="mensaje-error">
+                        <p th:text="${error}">Ocurrió un error.</p>
+                    </div>
+
+                    <div th:if="${usuario != null}" class="perfil-info">
+
+                        <form th:action="@{/usuario/actualizar}" method="post" class="perfil-formulario">
+                            <div class="perfil-item">
+                                <label class="perfil-etiqueta" for="nombre">Nombre</label>
+                                <input class="perfil-input" type="text" id="nombre" name="nombre"
+                                       th:value="${usuario.nombre}" required>
+                            </div>
+
+                            <div class="perfil-item">
+                                <label class="perfil-etiqueta" for="correo">Correo</label>
+                                <input class="perfil-input" type="email" id="correo" name="correo"
+                                       th:value="${usuario.correo}" required>
+                            </div>
+
+                            <div class="perfil-item">
+                                <label class="perfil-etiqueta" for="direccion">Dirección</label>
+                                <input class="perfil-input" type="text" id="direccion" name="direccion"
+                                       th:value="${usuario.direccion}">
+                            </div>
+
+                            <div class="perfil-item">
+                                <label class="perfil-etiqueta" for="password">Nueva contraseña</label>
+                                <input class="perfil-input" type="password" id="password" name="password"
+                                       placeholder="Déjala vacía si no deseas cambiarla">
+                            </div>
+
+                            <div class="perfil-item">
+                                <span class="perfil-etiqueta">Activo</span>
+                                <span class="perfil-valor" th:text="${usuario.activo ? 'Sí' : 'No'}">Sí</span>
+                            </div>
+
+                            <div class="perfil-item">
+                                <span class="perfil-etiqueta">Fecha de registro</span>
+                                <span class="perfil-valor" th:text="${usuario.fechaRegistro}">Fecha</span>
+                            </div>
+
+                            <div class="perfil-acciones">
+                                <button type="submit" class="boton-principal">Guardar cambios</button>
+
+                                <a sec:authorize="hasAuthority('CLIENTE') or hasRole('CLIENTE')"
+                                   class="boton-secundario"
+                                   th:href="@{/usuario/pedidos}">
+                                    Ver pedidos
+                                </a>
+
+                                <a sec:authorize="hasAuthority('CLIENTE') or hasRole('CLIENTE')"
+                                   class="boton-secundario"
+                                   th:href="@{/usuario/deseos}">
+                                    Ver lista de deseos
+                                </a>
+                                
+                                <a sec:authorize="hasAuthority('CLIENTE') or hasRole('CLIENTE')"
+                                   class="boton-secundario"
+                                   th:href="@{/devolucion/mis}">
+                                    Ver devoluciones
+                                </a>
+                            </div>
+                        </form>
+
+                        <div class="form-eliminar-cuenta">
+                            <p class="texto-peligro">Esta acción eliminará tu cuenta y su historial de forma permanente.</p>
+
+                            <form th:action="@{/usuario/eliminar}" method="post"
+                                  onsubmit="return confirm('¿Está seguro de eliminar su cuenta? Esta acción borrará su cuenta y su historial, y no se puede deshacer.');">
+                                <button type="submit" class="boton-peligro">Eliminar mi cuenta</button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <div th:if="${usuario == null}" class="sin-datos">
+                        <p>No se encontró la información del usuario.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Olvidé mi contraseña')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="olvido-seccion">
+                <div class="olvido-caja">
+                    <h1>Recuperar contraseña</h1>
+                    <p class="olvido-subtexto">Ingresa tu correo electrónico para solicitar la recuperación de tu contraseña.</p>
+
+                    <form class="olvido-formulario">
+                        <div>
+                            <label for="correo">Correo electrónico</label>
+                            <input type="email" id="correo" name="correo" required>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="olvido-boton">Enviar solicitud</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

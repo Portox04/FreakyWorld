@@ -2,9 +2,12 @@ package com.freakyworld.service;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
 import com.google.firebase.cloud.StorageClient;
 import java.io.IOException;
+import java.net.URL;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +36,9 @@ public class FirebaseStorageService {
                 archivo.getContentType()
         );
 
-        return blob.getMediaLink();
+       URL urlFirmada = blob.signUrl( 1825, TimeUnit.DAYS);
+
+        return urlFirmada.toString();
     }
 
     public boolean eliminarArchivo(String nombreArchivo) {
@@ -47,6 +52,7 @@ public class FirebaseStorageService {
 
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

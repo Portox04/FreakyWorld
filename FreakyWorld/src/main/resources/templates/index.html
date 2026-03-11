@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Inicio')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="seccion-bienvenida">
+                <h1>Bienvenido a FreakyWorld</h1>
+                <p>Compra figuras de anime de forma rápida y sencilla.</p>
+            </section>
+
+            <section>
+                <h2>Productos disponibles</h2>
+
+                <div th:if="${productos == null or #lists.isEmpty(productos)}">
+                    <p>No hay productos disponibles por el momento.</p>
+                </div>
+
+                <div class="grid-productos" th:if="${productos != null and !#lists.isEmpty(productos)}">
+                    <div class="tarjeta-producto" th:each="producto : ${productos}">
+                        <div class="imagen-producto-contenedor">
+                            <img th:if="${producto.rutaImagen != null}"
+                                 th:src="${producto.rutaImagen}"
+                                 alt="Imagen del producto"
+                                 class="imagen-producto">
+
+                            <img th:if="${producto.rutaImagen == null}"
+                                 src="https://via.placeholder.com/300x220?text=Sin+imagen"
+                                 alt="Sin imagen"
+                                 class="imagen-producto">
+                        </div>
+
+                        <div class="contenido-producto">
+                            <h3 th:text="${producto.nombre}">Nombre</h3>
+                            
+                            <p class="descripcion-producto" th:text="${producto.descripcion}">Descripción</p>
+
+                            <p class="precio-producto">
+                                ₡ <span th:text="${producto.precio}">0.00</span>
+                            </p>
+
+                            <a class="boton-ver-producto"
+                               th:href="@{/producto/ficha/{id}(id=${producto.idProducto}, origen='inicio')}">
+                                Ver producto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

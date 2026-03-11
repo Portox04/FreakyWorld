@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package com.freakyworld.domain;
 
 import jakarta.persistence.*;
@@ -26,4 +21,8 @@ public class Categoria implements Serializable {
 
     @Column(name = "descripcion", length = 200)
     private String descripcion;
+
+    // AQUI SE GUARDA LA URL DE FIREBASE
+    @Column(name = "ruta_imagen", length = 1024)
+    private String rutaImagen;
 }

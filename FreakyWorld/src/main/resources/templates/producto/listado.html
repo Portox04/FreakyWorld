@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{general/layout :: head('Listado de productos')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Listado de productos</h1>
+                        <p class="texto-suave">Administra los productos registrados en la tienda.</p>
+                    </div>
+
+                    <div sec:authorize="hasAuthority('ADMIN')">
+                        <a class="boton-principal" th:href="@{/producto/modifica}">Nuevo producto</a>
+                    </div>
+                </div>
+
+                <div th:if="${mensaje}" class="mensaje">
+                    <p th:text="${mensaje}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${productos == null or #lists.isEmpty(productos)}" class="sin-datos">
+                    <p>No hay productos registrados.</p>
+                </div>
+
+                <div th:if="${productos != null and !#lists.isEmpty(productos)}" class="tabla-responsive">
+                    <table class="tabla-productos">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Categoría</th>
+                                <th>Activo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="producto : ${productos}">
+                                <td>
+                                    <img th:if="${producto.rutaImagen != null}"
+                                         th:src="${producto.rutaImagen}"
+                                         alt="Imagen"
+                                         class="miniatura-producto">
+
+                                    <img th:if="${producto.rutaImagen == null}"
+                                         src="https://via.placeholder.com/100x100?text=Sin+imagen"
+                                         alt="Sin imagen"
+                                         class="miniatura-producto">
+                                </td>
+
+                                <td class="nombre-producto-tabla" th:text="${producto.nombre}">Nombre</td>
+                                <td>₡ <span th:text="${producto.precio}">0.00</span></td>
+                                <td th:text="${producto.stock}">0</td>
+                                <td th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin categoría'}">Categoría</td>
+
+                                <td>
+                                    <span th:if="${producto.activo}" class="estado activo">Sí</span>
+                                    <span th:if="${!producto.activo}" class="estado inactivo">No</span>
+                                </td>
+
+                                <td>
+                                    <div class="acciones-tabla">
+                                        <a class="accion ver"
+                                           th:href="@{/producto/ficha/{id}(id=${producto.idProducto})}">
+                                            Ver
+                                        </a>
+
+                                        <span sec:authorize="hasAuthority('ADMIN')" class="acciones-admin">
+                                            <a class="accion editar"
+                                               th:href="@{/producto/modifica/{id}(id=${producto.idProducto})}">
+                                                Editar
+                                            </a>
+
+                                            <a class="accion eliminar"
+                                               th:href="@{/producto/eliminar/{id}(id=${producto.idProducto})}"
+                                               onclick="return confirm('¿Desea eliminar este producto?');">
+                                                Eliminar
+                                            </a>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

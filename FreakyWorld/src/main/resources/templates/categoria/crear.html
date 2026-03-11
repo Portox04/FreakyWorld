@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Nueva categoría')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="categoria-form-seccion">
+                <div class="categoria-form-caja">
+                    <h1>Nueva categoría</h1>
+                    <p class="categoria-form-subtexto">Completa la información de la nueva categoría.</p>
+
+                    <!-- AQUI AGREGUE enctype PARA PODER ENVIAR LA IMAGEN -->
+                    <form th:action="@{/categoria/guardar}" th:object="${categoria}" method="post" enctype="multipart/form-data" class="categoria-formulario">
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" required>
+                        </div>
+
+                        <div>
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+                        </div>
+
+                        <!-- AQUI AGREGUE EL CAMPO DE IMAGEN -->
+                        <div>
+                            <label for="imagen">Imagen</label>
+                            <input type="file" id="imagen" name="imagen" accept="image/*">
+                        </div>
+
+                        <div class="categoria-form-botones">
+                            <button type="submit">Guardar</button>
+                            <a class="boton-volver" th:href="@{/categoria/listado}">Volver a productos</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

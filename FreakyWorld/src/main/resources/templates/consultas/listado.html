@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{general/layout :: head('Productos y filtros')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Productos</h1>
+                        <p class="texto-suave">Busca productos usando filtros rápidos.</p>
+                    </div>
+
+                    <div sec:authorize="hasAuthority('ADMIN')">
+                        <a class="boton-principal" th:href="@{/producto/modifica}">Nuevo producto</a>
+                    </div>
+                </div>
+
+                <div class="filtros-caja">
+                    <form th:action="@{/consultas/listado}" method="get" class="filtros-grid">
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" th:value="${nombre}">
+                        </div>
+
+                        <div>
+                            <label for="idCategoria">Categoría</label>
+                            <select id="idCategoria" name="idCategoria">
+                                <option value="">Todas</option>
+                                <option th:each="categoria : ${categorias}"
+                                        th:value="${categoria.idCategoria}"
+                                        th:text="${categoria.nombre}"
+                                        th:selected="${idCategoria != null and idCategoria == categoria.idCategoria}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="precioMin">Precio mínimo</label>
+                            <input type="number" id="precioMin" name="precioMin" step="0.01" min="0" th:value="${precioMin}">
+                        </div>
+
+                        <div>
+                            <label for="precioMax">Precio máximo</label>
+                            <input type="number" id="precioMax" name="precioMax" step="0.01" min="0" th:value="${precioMax}">
+                        </div>
+
+                        <div class="filtros-botones">
+                            <button type="submit">Filtrar</button>
+                            <a class="boton-volver" th:href="@{/consultas/listado}">Limpiar</a>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${productos == null or #lists.isEmpty(productos)}" class="sin-datos">
+                    <p>No se encontraron productos con esos filtros.</p>
+                </div>
+
+                <div th:if="${productos != null and !#lists.isEmpty(productos)}" class="lista-productos-consulta">
+                    <div class="item-producto-consulta" th:each="producto : ${productos}">
+                        <div class="producto-consulta-imagen-bloque">
+                            <img th:if="${producto.rutaImagen != null}"
+                                 th:src="${producto.rutaImagen}"
+                                 alt="Imagen del producto"
+                                 class="producto-consulta-imagen">
+
+                            <img th:if="${producto.rutaImagen == null}"
+                                 src="https://via.placeholder.com/300x220?text=Sin+imagen"
+                                 alt="Sin imagen"
+                                 class="producto-consulta-imagen">
+                        </div>
+
+                        <div class="producto-consulta-info">
+                            <h3 class="producto-consulta-nombre" th:text="${producto.nombre}">Nombre</h3>
+
+                            <p class="producto-consulta-descripcion"
+                               th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">
+                                Descripción
+                            </p>
+
+                            <p class="producto-consulta-categoria">
+                                <strong>Categoría:</strong>
+                                <span th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin categoría'}">Categoría</span>
+                            </p>
+
+                            <p class="producto-consulta-precio">
+                                <strong>Precio:</strong> ₡<span th:text="${producto.precio}">0.00</span>
+                            </p>
+                        </div>
+
+                        <div class="producto-consulta-acciones">
+                            <a class="boton-ver-producto"
+                               th:href="@{/producto/ficha/{id}(id=${producto.idProducto}, origen='productos')}">
+                                Ver producto
+                            </a>
+
+                            <div sec:authorize="hasAuthority('ADMIN')" class="producto-consulta-admin">
+                                <a class="boton-secundario"
+                                   th:href="@{/producto/modifica/{idProducto}(idProducto=${producto.idProducto})}">
+                                    Editar
+                                </a>
+
+                                <a class="boton-eliminar"
+                                   th:href="@{/producto/eliminar/{idProducto}(idProducto=${producto.idProducto})}"
+                                   onclick="return confirm('¿Desea eliminar este producto?');">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

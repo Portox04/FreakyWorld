@@ -25,6 +25,10 @@ public class Devolucion implements Serializable {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "id_detalle_pedido", nullable = false)
+    private DetalleFactura detalleFactura;
+
     @Column(name = "motivo", nullable = false, length = 255)
     private String motivo;
 

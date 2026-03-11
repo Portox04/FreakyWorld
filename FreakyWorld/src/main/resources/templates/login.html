@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Iniciar sesión')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="login-seccion">
+                <div class="login-caja">
+                    <h1>Iniciar sesión</h1>
+                    <p class="login-subtexto">Accede a tu cuenta para continuar en FreakyWorld.</p>
+
+                    <div th:if="${param.error != null}" class="error">
+                        <p>Correo o contraseña incorrectos.</p>
+                    </div>
+
+                    <div th:if="${param.logout != null}" class="mensaje">
+                        <p>Sesión cerrada correctamente.</p>
+                    </div>
+
+                    <form th:action="@{/login}" method="post" class="login-formulario">
+                        <div>
+                            <label for="username">Correo</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+
+                        <div>
+                            <label for="password">Contraseña</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="login-boton">Ingresar</button>
+                        </div>
+                    </form>
+
+                    <div class="login-enlace">
+                        <p>¿No tienes cuenta? <a th:href="@{/registro/nuevo}">Regístrate aquí</a></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

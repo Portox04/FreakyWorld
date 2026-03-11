@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Solicitar devolución')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Solicitar devolución</h1>
+                        <p class="texto-suave">Selecciona el producto y completa la información de la solicitud.</p>
+                    </div>
+
+                    <div>
+                        <a class="boton-secundario"
+                           th:href="@{/carrito/factura/{idFactura}(idFactura=${factura.idFactura})}">
+                            Volver a factura
+                        </a>
+                    </div>
+                </div>
+
+                <div th:if="${exito}" class="mensaje">
+                    <p th:text="${exito}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div class="perfil-caja" th:if="${factura != null}">
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Factura</span>
+                        <span class="perfil-valor" th:text="${factura.idFactura}">1</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Fecha</span>
+                        <span class="perfil-valor" th:text="${factura.fechaPedido}">2026-03-07</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Cliente</span>
+                        <span class="perfil-valor" th:text="${factura.usuario.nombre}">Cliente</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Estado del pedido</span>
+                        <span class="perfil-valor" th:text="${factura.estado}">PENDIENTE</span>
+                    </div>
+                </div>
+
+                <div class="perfil-caja">
+                    <h2>Formulario de devolución</h2>
+
+                    <form th:action="@{/devolucion/guardar}" method="post">
+                        <input type="hidden" name="idFactura" th:value="${factura.idFactura}">
+
+                        <div class="perfil-item">
+                            <label class="perfil-etiqueta" for="idDetalleFactura">Producto</label>
+                            <select id="idDetalleFactura" name="idDetalleFactura" class="perfil-input" required>
+                                <option value="">Seleccione un producto</option>
+                                <option th:each="detalle : ${detalles}"
+                                        th:value="${detalle.idDetalleFactura}"
+                                        th:text="${detalle.producto.nombre + ' | Cantidad: ' + detalle.cantidad + ' | CRC ' + detalle.subtotal}">
+                                    Producto
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="perfil-item">
+                            <label class="perfil-etiqueta" for="motivo">Motivo</label>
+                            <select id="motivo" name="motivo" class="perfil-input" required>
+                                <option value="">Seleccione un motivo</option>
+                                <option value="Producto dañado">Producto dañado</option>
+                                <option value="Producto incorrecto">Producto incorrecto</option>
+                                <option value="Producto incompleto">Producto incompleto</option>
+                                <option value="No era lo esperado">No era lo esperado</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="perfil-item">
+                            <label class="perfil-etiqueta" for="descripcion">Descripción</label>
+                            <textarea id="descripcion"
+                                      name="descripcion"
+                                      class="perfil-input"
+                                      rows="5"
+                                      placeholder="Describe brevemente el motivo de la devolución"></textarea>
+                        </div>
+
+                        <div class="perfil-acciones">
+                            <button type="submit" class="boton-principal">Enviar solicitud</button>
+                            <a class="boton-secundario" th:href="@{/devolucion/mis}">Mis devoluciones</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

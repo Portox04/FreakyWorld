@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <body>
+        <header th:fragment="menu">
+            <div class="franja-header">
+                <div class="container header-contenido">
+                    <div>
+                        <h1 class="titulo-header">FreakyWorld</h1>
+                        <p class="subtitulo-header">Tienda online de figuras y artículos geek</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="navbar navbar-expand-lg navbar-dark menu-morado">
+                <div class="container">
+                    <a class="navbar-brand fw-bold" th:href="@{/}">FreakyWorld</a>
+
+                    <button class="navbar-toggler" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menuPrincipal"
+                            aria-controls="menuPrincipal"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="menuPrincipal">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/consultas/listado}">Productos</a>
+                            </li>
+
+                            <li class="nav-item" sec:authorize="hasAuthority('CLIENTE')">
+                            </li>
+
+                            <li class="nav-item" sec:authorize="hasAuthority('CLIENTE')">
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/categoria/listado}">Categorias</a>
+                            </li>
+
+                            <li class="nav-item dropdown" sec:authorize="hasAuthority('ADMIN')">
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="menuAdministracion"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    Administración
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="menuAdministracion">
+                                    <li>
+                                        <a class="dropdown-item" th:href="@{/admin/listado}">
+                                            Usuarios y roles
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" th:href="@{/admin/devoluciones}">
+                                            Devoluciones
+                                        </a>
+                                    </li>
+
+                                    <!-- AQUI AGREGUE PEDIDOS -->
+                                    <li>
+                                        <a class="dropdown-item" th:href="@{/admin/pedidos/listado}">
+                                            Pedidos
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <div class="menu-botones d-flex align-items-center gap-2">
+                            <a sec:authorize="isAnonymous()" class="btn btn-outline-light btn-sm" th:href="@{/login}">
+                                Iniciar sesión
+                            </a>
+
+                            <a sec:authorize="isAnonymous()" class="btn btn-sm boton-menu" th:href="@{/registro/nuevo}">
+                                Registrarse
+                            </a>
+
+                            <a sec:authorize="hasAuthority('CLIENTE')"
+                               class="btn btn-sm boton-menu icono-carrito"
+                               th:href="@{/carrito/listado}"
+                               title="Carrito">
+                                <i class="bi bi-cart3"></i>
+                            </a>
+
+                            <a sec:authorize="isAuthenticated()" class="btn btn-sm boton-menu" th:href="@{/usuario/perfil}">
+                                Mi perfil
+                            </a>
+
+                            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm boton-menu">Cerrar sesión</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </body>
+</html>
