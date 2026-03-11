@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Retorno')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="retorno-seccion">
+                <div class="retorno-caja">
+                    <h1>Retorno</h1>
+                    <p class="retorno-texto">Tu solicitud fue procesada correctamente.</p>
+                    <a class="boton-principal" th:href="@{/usuario/perfil}">Volver al perfil</a>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

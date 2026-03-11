@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Modificar producto')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="producto-form-seccion">
+                <div class="producto-form-caja">
+                    <h1 th:text="${producto.idProducto == null ? 'Nuevo producto' : 'Editar producto'}">Producto</h1>
+                    <p class="producto-form-subtexto">Completa la información del producto.</p>
+
+                    <form th:action="@{/producto/guardar}" th:object="${producto}" method="post" enctype="multipart/form-data" class="producto-formulario">
+                        <input type="hidden" th:field="*{idProducto}">
+
+                        <div class="producto-form-grid">
+                            <div>
+                                <label for="nombre">Nombre</label>
+                                <input type="text" id="nombre" th:field="*{nombre}" required>
+                            </div>
+
+                            
+
+                            <div class="campo-completo">
+                                <label for="descripcion">Descripción</label>
+                                <textarea id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="precio">Precio</label>
+                                <input type="number" id="precio" th:field="*{precio}" step="0.01" min="0" required>
+                            </div>
+
+                            <div>
+                                <label for="stock">Stock</label>
+                                <input type="number" id="stock" th:field="*{stock}" min="0" required>
+                            </div>
+
+                            <div>
+                                <label for="categoria">Categoría</label>
+                                <select id="categoria" th:field="*{categoria}" required>
+                                    <option value="">Seleccione una categoría</option>
+                                    <option th:each="categoria : ${categorias}"
+                                            th:value="${categoria.idCategoria}"
+                                            th:text="${categoria.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="activo">Activo</label>
+                                <select id="activo" th:field="*{activo}">
+                                    <option th:value="true">Sí</option>
+                                    <option th:value="false">No</option>
+                                </select>
+                            </div>
+
+                            <div class="campo-completo">
+                                <label for="imagenArchivo">Imagen</label>
+                                <input type="file" id="imagenArchivo" name="imagenArchivo" accept="image/*">
+                            </div>
+                        </div>
+
+                        <div th:if="${producto.rutaImagen != null}" class="imagen-actual-bloque">
+                            <p>Imagen actual:</p>
+                            <img th:src="${producto.rutaImagen}" alt="Imagen actual" class="imagen-actual-producto">
+                        </div>
+
+                        <div class="producto-form-botones">
+                            <button type="submit">Guardar</button>
+                            <a class="boton-volver" th:href="@{/producto/listado}">Volver a productos</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{general/layout :: head('Detalle del producto')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="detalle-producto">
+                <h1>Detalle del producto</h1>
+
+                <div th:if="${producto != null}" class="detalle-contenedor">
+                    <div class="detalle-imagen-bloque">
+                        <img th:if="${producto.rutaImagen != null}"
+                             th:src="${producto.rutaImagen}"
+                             alt="Imagen del producto"
+                             class="detalle-imagen">
+                    </div>
+
+                    <div class="detalle-info-bloque">
+                        <h2 th:text="${producto.nombre}">Nombre</h2>
+                        <p><strong>Descripción:</strong> <span th:text="${producto.descripcion}">Descripción</span></p>
+                        <p><strong>Precio:</strong> ₡<span th:text="${producto.precio}">0.00</span></p>
+                        <p><strong>Stock:</strong> <span th:text="${producto.stock}">0</span></p>
+                        <p>
+                            <strong>Categoría:</strong>
+                            <span th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin categoría'}">Categoría</span>
+                        </p>
+
+                        <div sec:authorize="hasAuthority('CLIENTE')" class="detalle-acciones">
+                            <a class="boton-principal" th:href="@{/carrito/agregar/{id}(id=${producto.idProducto})}">
+                                Agregar al carrito
+                            </a>
+
+                            <a class="boton-secundario" th:href="@{/interaccion/deseos/agregar/{id}(id=${producto.idProducto})}">
+                                Agregar a deseos
+                            </a>
+                        </div>
+                    </div>
+
+                    <div sec:authorize="hasAuthority('CLIENTE')" class="detalle-resena">
+                        <h3>Agregar reseña</h3>
+
+                        <form th:action="@{/interaccion/resena/guardar}" method="post">
+                            <input type="hidden" name="idProducto" th:value="${producto.idProducto}">
+
+                            <div>
+                                <label for="calificacion">Calificación</label>
+                                <select id="calificacion" name="calificacion" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="comentario">Comentario</label>
+                                <textarea id="comentario" name="comentario" rows="4"></textarea>
+                            </div>
+
+                            <div>
+                                <button type="submit">Guardar reseña</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="detalle-lista-resenas">
+                        <h3>Reseñas del producto</h3>
+
+                        <div th:if="${#lists.isEmpty(resenas)}" class="sin-resenas">
+                            <p>Este producto todavía no tiene reseñas.</p>
+                        </div>
+
+                        <div th:if="${!#lists.isEmpty(resenas)}" class="contenedor-resenas">
+                            <div th:each="resena : ${resenas}" class="tarjeta-resena">
+                                <div class="resena-encabezado">
+                                    <p class="resena-usuario">
+                                        <strong>Usuario:</strong>
+                                        <span th:text="${resena.usuario.correo}">usuario@correo.com</span>
+                                    </p>
+
+                                    <div class="resena-calificacion">
+                                        <strong>Calificación:</strong>
+                                        <div class="resena-estrellas">
+                                            <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                                  th:text="'★'"
+                                                  th:classappend="${i <= resena.calificacion} ? ' estrella-activa' : ' estrella-inactiva'">
+                                            </span>
+                                            <span class="resena-numero" th:text="${resena.calificacion} + '/5'">5/5</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="resena-comentario">
+                                    <strong>Comentario:</strong>
+                                    <span th:text="${resena.comentario != null && !#strings.isEmpty(resena.comentario) ? resena.comentario : 'Sin comentario'}">
+                                        Comentario
+                                    </span>
+                                </p>
+
+                                <p class="resena-fecha">
+                                    <strong>Fecha:</strong>
+                                    <span th:text="${resena.fechaResena != null ? #temporals.format(resena.fechaResena, 'dd/MM/yyyy HH:mm') : 'Sin fecha'}">
+                                        Fecha
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${producto == null}" class="sin-datos">
+                    <p>Producto no encontrado.</p>
+                </div>
+
+                <br>
+                <a th:if="${origen == 'inicio'}"
+                   class="boton-volver"
+                   th:href="@{/}">
+                    Volver a inicio
+                </a>
+
+                <a th:if="${origen == 'productos'}"
+                   class="boton-volver"
+                   th:href="@{/consultas/listado}">
+                    Volver a productos
+                </a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

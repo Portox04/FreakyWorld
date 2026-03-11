@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Lista de deseos')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Mi lista de deseos</h1>
+                        <p class="texto-suave">Guarda aquí los productos que te interesan.</p>
+                    </div>
+                </div>
+
+                <div th:if="${deseos == null or #lists.isEmpty(deseos)}" class="sin-datos">
+                    <p>No tienes productos en tu lista de deseos.</p>
+                </div>
+
+                <div th:if="${deseos != null and !#lists.isEmpty(deseos)}" class="grid-productos">
+                    <div class="tarjeta-producto" th:each="deseo : ${deseos}">
+                        <div class="imagen-producto-contenedor">
+                            <img th:if="${deseo.producto.rutaImagen != null}"
+                                 th:src="${deseo.producto.rutaImagen}"
+                                 alt="Imagen del producto"
+                                 class="imagen-producto">
+
+                            <img th:if="${deseo.producto.rutaImagen == null}"
+                                 src="https://via.placeholder.com/300x220?text=Sin+imagen"
+                                 alt="Sin imagen"
+                                 class="imagen-producto">
+                        </div>
+
+                        <div class="contenido-producto">
+                            <h3 th:text="${deseo.producto.nombre}">Nombre</h3>
+                            
+                            <p class="precio-producto">
+                                ₡<span th:text="${deseo.producto.precio}">0.00</span>
+                            </p>
+
+                            <div class="acciones-deseos">
+                                <a class="boton-principal"
+                                   th:href="@{/producto/ficha/{id}(id=${deseo.producto.idProducto})}">
+                                    Ver producto
+                                </a>
+
+                                <a class="accion eliminar"
+                                   th:href="@{/interaccion/deseos/eliminar/{id}(id=${deseo.producto.idProducto})}">
+                                    Eliminar de deseos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a class="boton-volver" th:href="@{/usuario/perfil}">Volver al perfil</a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

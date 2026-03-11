@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Mis pedidos')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Mis pedidos</h1>
+                        <p class="texto-suave">Consulta el historial y estado de tus pedidos.</p>
+                    </div>
+                </div>
+
+                <div th:if="${pedidos == null or #lists.isEmpty(pedidos)}" class="sin-datos">
+                    <p>No tienes pedidos registrados.</p>
+                </div>
+
+                <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" class="tabla-responsive">
+                    <table class="tabla-pedidos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Método de pago</th>
+                                <th>Estado</th>
+                                <th>Número de seguimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="pedido : ${pedidos}">
+                                <td th:text="${pedido.idFactura}">1</td>
+                                <td th:text="${pedido.fechaPedido}">2026-01-01</td>
+                                <td>₡ <span th:text="${pedido.total}">0.00</span></td>
+                                <td th:text="${pedido.metodoPago}">Tarjeta</td>
+                                <td>
+                                    <span class="estado estado-pedido" th:text="${pedido.estado}">PENDIENTE</span>
+                                </td>
+                                <td th:text="${pedido.numeroSeguimiento}">FW0001</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <a class="boton-volver" th:href="@{/usuario/perfil}">Volver al perfil</a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

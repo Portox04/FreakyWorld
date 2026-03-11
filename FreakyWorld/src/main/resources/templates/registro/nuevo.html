@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Registro')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="registro-seccion">
+                <div class="registro-caja">
+                    <h1>Crear cuenta</h1>
+                    <p class="registro-subtexto">Completa tus datos para registrarte en FreakyWorld.</p>
+
+                    <div th:if="${error}" class="error">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <form th:action="@{/registro/guardar}" th:object="${usuario}" method="post" class="registro-formulario">
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" required>
+                        </div>
+
+                        <div>
+                            <label for="correo">Correo</label>
+                            <input type="email" id="correo" th:field="*{correo}" required>
+                        </div>
+
+                        <div>
+                            <label for="password">Contraseña</label>
+                            <input type="password" id="password" th:field="*{password}" required>
+                        </div>
+
+                        <div>
+                            <label for="direccion">Dirección</label>
+                            <input type="text" id="direccion" th:field="*{direccion}">
+                        </div>
+
+                        <div>
+                            <button type="submit" class="registro-boton">Registrarse</button>
+                        </div>
+                    </form>
+
+                    <div class="registro-enlace">
+                        <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>
