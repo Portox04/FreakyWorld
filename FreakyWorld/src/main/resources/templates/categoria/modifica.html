@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Modificar categoría')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <h1>Modificar categoría</h1>
+
+                <form th:action="@{/categoria/guardar}" th:object="${categoria}" method="post">
+                    <input type="hidden" th:field="*{idCategoria}">
+
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" required>
+                    </div>
+
+                    <div>
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+                    </div>
+
+                    <div>
+                        <button type="submit">Guardar cambios</button>
+                    </div>
+                </form>
+
+                <br>
+                <a th:href="@{/categoria/listado}">Volver al listado</a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

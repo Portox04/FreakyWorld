@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Carrito de compras')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <h1>Carrito de compras</h1>
+
+                <div th:if="${mensaje}">
+                    <p th:text="${mensaje}"></p>
+                </div>
+
+                <div th:if="${error}">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${items == null or #lists.isEmpty(items)}">
+                    <p>Tu carrito está vacío.</p>
+                </div>
+
+                <div th:if="${items != null and !#lists.isEmpty(items)}">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Producto</th>
+                                <th>Serie</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${items}">
+                                <td>
+                                    <img th:if="${item.producto.imagen != null}"
+                                         th:src="${item.producto.imagen}"
+                                         alt="Imagen"
+                                         width="100">
+                                </td>
+                                <td th:text="${item.producto.nombre}">Producto</td>
+                                <td th:text="${item.producto.serie}">Serie</td>
+                                <td th:text="${item.producto.precio}">0.00</td>
+                                <td>
+                                    <form th:action="@{/carrito/actualizar}" method="post">
+                                        <input type="hidden" name="idProducto" th:value="${item.producto.idProducto}">
+                                        <input type="number" name="cantidad" th:value="${item.cantidad}" min="0" required>
+                                        <button type="submit">Actualizar</button>
+                                    </form>
+                                </td>
+                                <td th:text="${item.producto.precio * item.cantidad}">0.00</td>
+                                <td>
+                                    <a th:href="@{/carrito/eliminar/{id}(id=${item.producto.idProducto})}">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <br>
+
+                    <div>
+                        <strong>Total:</strong>
+                        <span th:text="${total}">0.00</span>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <a th:href="@{/carrito/vaciar}">Vaciar carrito</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Items del carrito')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <h1>Items del carrito</h1>
+
+                <div th:if="${items == null or #lists.isEmpty(items)}">
+                    <p>No hay productos en el carrito.</p>
+                </div>
+
+                <div th:if="${items != null and !#lists.isEmpty(items)}">
+                    <div th:each="item : ${items}">
+                        <div>
+                            <img th:if="${item.producto.imagen != null}"
+                                 th:src="${item.producto.imagen}"
+                                 alt="Imagen"
+                                 width="120">
+
+                            <h3 th:text="${item.producto.nombre}">Producto</h3>
+                            <p><strong>Serie:</strong> <span th:text="${item.producto.serie}">Serie</span></p>
+                            <p><strong>Precio:</strong> <span th:text="${item.producto.precio}">0.00</span></p>
+                            <p><strong>Cantidad:</strong> <span th:text="${item.cantidad}">1</span></p>
+                            <p><strong>Subtotal:</strong> <span th:text="${item.producto.precio * item.cantidad}">0.00</span></p>
+                        </div>
+                        <hr>
+                    </div>
+
+                    <div>
+                        <strong>Total:</strong>
+                        <span th:text="${total}">0.00</span>
+                    </div>
+                </div>
+
+                <br>
+                <a th:href="@{/carrito/listado}">Volver al carrito</a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

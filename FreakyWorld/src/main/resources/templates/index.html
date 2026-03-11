@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Inicio')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <h1>Bienvenido a FreakyWorld</h1>
+                <p>Compra figuras de anime de forma rápida y sencilla.</p>
+            </section>
+
+            <section>
+                <h2>Productos disponibles</h2>
+
+                <div th:if="${productos == null or #lists.isEmpty(productos)}">
+                    <p>No hay productos disponibles por el momento.</p>
+                </div>
+
+                <div th:if="${productos != null and !#lists.isEmpty(productos)}">
+                    <div th:each="producto : ${productos}">
+                        <div>
+                            <img th:if="${producto.imagen != null}" th:src="${producto.imagen}" alt="Imagen del producto" width="150">
+                            <h3 th:text="${producto.nombre}">Nombre</h3>
+                            <p th:text="${producto.serie}">Serie</p>
+                            <p th:text="${producto.descripcion}">Descripción</p>
+                            <p>
+                                Precio:
+                                <span th:text="${producto.precio}">0.00</span>
+                            </p>
+                            <a th:href="@{/producto/ficha/{id}(id=${producto.idProducto})}">Ver producto</a>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

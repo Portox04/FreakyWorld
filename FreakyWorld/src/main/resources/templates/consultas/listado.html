@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Resultado de búsqueda')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <h1>Resultado de búsqueda</h1>
+
+                <form th:action="@{/consultas/listado}" method="get">
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" th:value="${nombre}">
+                    </div>
+
+                    <div>
+                        <label for="serie">Serie</label>
+                        <input type="text" id="serie" name="serie" th:value="${serie}">
+                    </div>
+
+                    <div>
+                        <label for="idCategoria">Categoría</label>
+                        <select id="idCategoria" name="idCategoria">
+                            <option value="">Todas</option>
+                            <option th:each="categoria : ${categorias}"
+                                    th:value="${categoria.idCategoria}"
+                                    th:text="${categoria.nombre}"
+                                    th:selected="${idCategoria != null and idCategoria == categoria.idCategoria}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="precioMin">Precio mínimo</label>
+                        <input type="number" id="precioMin" name="precioMin" step="0.01" min="0" th:value="${precioMin}">
+                    </div>
+
+                    <div>
+                        <label for="precioMax">Precio máximo</label>
+                        <input type="number" id="precioMax" name="precioMax" step="0.01" min="0" th:value="${precioMax}">
+                    </div>
+
+                    <div>
+                        <button type="submit">Filtrar</button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <div th:if="${productos == null or #lists.isEmpty(productos)}">
+                    <p>No se encontraron productos con esos filtros.</p>
+                </div>
+
+                <div th:if="${productos != null and !#lists.isEmpty(productos)}">
+                    <div th:each="producto : ${productos}">
+                        <div>
+                            <img th:if="${producto.imagen != null}"
+                                 th:src="${producto.imagen}"
+                                 alt="Imagen del producto"
+                                 width="140">
+
+                            <h3 th:text="${producto.nombre}">Nombre</h3>
+                            <p><strong>Serie:</strong> <span th:text="${producto.serie}">Serie</span></p>
+                            <p><strong>Precio:</strong> <span th:text="${producto.precio}">0.00</span></p>
+                            <p>
+                                <strong>Categoría:</strong>
+                                <span th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin categoría'}">
+                                    Categoría
+                                </span>
+                            </p>
+
+                            <a th:href="@{/producto/ficha/{id}(id=${producto.idProducto})}">Ver producto</a>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+
+                <a th:href="@{/consultas/filtros}">Volver a filtros</a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

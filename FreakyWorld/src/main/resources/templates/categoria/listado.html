@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Listado de categorías')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <h1>Listado de categorías</h1>
+
+                <div th:if="${mensaje}">
+                    <p th:text="${mensaje}"></p>
+                </div>
+
+                <div th:if="${error}">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${categorias == null or #lists.isEmpty(categorias)}">
+                    <p>No hay categorías registradas.</p>
+                </div>
+
+                <div th:if="${categorias != null and !#lists.isEmpty(categorias)}">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="categoria : ${categorias}">
+                                <td th:text="${categoria.idCategoria}">1</td>
+                                <td th:text="${categoria.nombre}">Nombre</td>
+                                <td th:text="${categoria.descripcion}">Descripción</td>
+                                <td>
+                                    <a th:href="@{/categoria/modifica/{id}(id=${categoria.idCategoria})}">Editar</a>
+                                    |
+                                    <a th:href="@{/categoria/eliminar/{id}(id=${categoria.idCategoria})}"
+                                       onclick="return confirm('¿Desea eliminar esta categoría?');">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <br>
+                <a th:href="@{/categoria/crear}">Nueva categoría</a>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>
