@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/layout :: head('Listado de usuarios')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Listado de usuarios</h1>
+                        <p class="texto-suave">Administra los usuarios registrados y sus roles.</p>
+                    </div>
+                </div>
+
+                <div th:if="${exito}" class="mensaje">
+                    <p th:text="${exito}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${usuarios == null or #lists.isEmpty(usuarios)}" class="sin-datos">
+                    <p>No hay usuarios registrados.</p>
+                </div>
+
+                <div th:if="${usuarios != null and !#lists.isEmpty(usuarios)}" class="tabla-responsive">
+                    <table class="tabla-productos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Dirección</th>
+                                <th>Activo</th>
+                                <th>Fecha de registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usuario : ${usuarios}">
+                                <td th:text="${usuario.idUsuario}">1</td>
+                                <td th:text="${usuario.nombre}">Nombre</td>
+                                <td th:text="${usuario.correo}">correo@ejemplo.com</td>
+                                <td th:text="${usuario.direccion != null and !#strings.isEmpty(usuario.direccion) ? usuario.direccion : 'Sin dirección'}">
+                                    Dirección
+                                </td>
+                                <td>
+                                    <span th:if="${usuario.activo}" class="estado activo">Sí</span>
+                                    <span th:if="${!usuario.activo}" class="estado inactivo">No</span>
+                                </td>
+                                <td th:text="${usuario.fechaRegistro}">2026-03-07</td>
+                                <td>
+                                    <div class="acciones-tabla">
+                                        <a class="accion editar"
+                                           th:href="@{/admin/roles/{idUsuario}(idUsuario=${usuario.idUsuario})}">
+                                            Ver roles
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

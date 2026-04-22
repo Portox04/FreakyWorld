@@ -10,20 +10,27 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.freakyworld.domain.DetalleFactura;
+import com.freakyworld.domain.Factura;
+import com.freakyworld.repository.DetalleFacturaRepository;
+import com.freakyworld.repository.FacturaRepository;
 @Service
 public class CarritoService {
 
     private final CarritoRepository carritoRepository;
     private final ItemRepository itemRepository;
     private final ProductoRepository productoRepository;
+    private final FacturaRepository facturaRepository;
+    private final DetalleFacturaRepository detalleFacturaRepository;
 
     public CarritoService(CarritoRepository carritoRepository,
                           ItemRepository itemRepository,
-                          ProductoRepository productoRepository) {
+                          ProductoRepository productoRepository, FacturaRepository facturaRepository, DetalleFacturaRepository detalleFacturaRepository) {
         this.carritoRepository = carritoRepository;
         this.itemRepository = itemRepository;
         this.productoRepository = productoRepository;
+        this.facturaRepository = facturaRepository;
+        this.detalleFacturaRepository = detalleFacturaRepository;
     }
 
     @Transactional(readOnly = true)
@@ -111,4 +118,59 @@ public class CarritoService {
 
         return total;
     }
+    
+    @Transactional
+public Factura pagarCarrito(Long idUsuario, String metodoPago) {
+    Carrito carrito = obtenerCarritoPorUsuario(idUsuario);
+    List<Item> items = itemRepository.findByCarritoIdCarrito(carrito.getIdCarrito());
+
+    if (items.isEmpty()) {
+        throw new RuntimeException("El carrito está vacío");
+    }
+
+    BigDecimal total = BigDecimal.ZERO;
+
+    for (Item item : items) {
+        Producto producto = item.getProducto();
+
+        if (producto.getStock() == null || producto.getStock() < item.getCantidad()) {
+            throw new RuntimeException("No hay stock suficiente para el producto: " + producto.getNombre());
+        }
+
+        BigDecimal subtotal = producto.getPrecio()
+                .multiply(BigDecimal.valueOf(item.getCantidad()));
+        total = total.add(subtotal);
+    }
+
+    Factura factura = new Factura();
+    factura.setUsuario(carrito.getUsuario());
+    factura.setTotal(total);
+    factura.setMetodoPago(metodoPago);
+    factura.setEstado("PENDIENTE");
+    factura.setNumeroSeguimiento("PED-" + System.currentTimeMillis());
+
+    Factura facturaGuardada = facturaRepository.save(factura);
+
+    for (Item item : items) {
+        Producto producto = item.getProducto();
+        BigDecimal precioUnitario = producto.getPrecio();
+        BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad()));
+
+        DetalleFactura detalle = new DetalleFactura();
+        detalle.setFactura(facturaGuardada);
+        detalle.setProducto(producto);
+        detalle.setCantidad(item.getCantidad());
+        detalle.setPrecioUnitario(precioUnitario);
+        detalle.setSubtotal(subtotal);
+
+        detalleFacturaRepository.save(detalle);
+
+        producto.setStock(producto.getStock() - item.getCantidad());
+        productoRepository.save(producto);
+    }
+
+    itemRepository.deleteAll(items);
+
+    return facturaGuardada;
+}
 }

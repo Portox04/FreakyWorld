@@ -11,4 +11,5 @@ public interface FacturaRepository extends JpaRepository<Factura, Long> {
     List<Factura> findByEstado(String estado);
 
     List<Factura> findByUsuarioIdUsuarioAndEstado(Long idUsuario, String estado);
+    List<Factura> findAllByOrderByFechaPedidoDesc();
 }

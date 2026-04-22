@@ -23,7 +23,7 @@ public class ConsultaService {
     }
 
     @Transactional(readOnly = true)
-    public List<Producto> filtrar(String nombre, String serie, Long idCategoria,
+    public List<Producto> filtrar(String nombre, Long idCategoria,
                                   BigDecimal precioMin, BigDecimal precioMax) {
 
         List<Producto> productos = productoRepository.findByActivoTrue();
@@ -31,9 +31,6 @@ public class ConsultaService {
         return productos.stream()
                 .filter(producto -> nombre == null || nombre.isBlank()
                         || producto.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                .filter(producto -> serie == null || serie.isBlank()
-                        || (producto.getSerie() != null
-                        && producto.getSerie().toLowerCase().contains(serie.toLowerCase())))
                 .filter(producto -> idCategoria == null
                         || (producto.getCategoria() != null
                         && producto.getCategoria().getIdCategoria().equals(idCategoria)))

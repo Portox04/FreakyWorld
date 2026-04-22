@@ -32,7 +32,6 @@ public class ConsultaController {
     @GetMapping("/listado")
     public String listarFiltrados(
             @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String serie,
             @RequestParam(required = false) Long idCategoria,
             @RequestParam(required = false) BigDecimal precioMin,
             @RequestParam(required = false) BigDecimal precioMax,
@@ -40,10 +39,9 @@ public class ConsultaController {
 
         model.addAttribute("categorias", categoriaService.listarCategorias());
         model.addAttribute("productos",
-                consultaService.filtrar(nombre, serie, idCategoria, precioMin, precioMax));
+                consultaService.filtrar(nombre, idCategoria, precioMin, precioMax));
 
         model.addAttribute("nombre", nombre);
-        model.addAttribute("serie", serie);
         model.addAttribute("idCategoria", idCategoria);
         model.addAttribute("precioMin", precioMin);
         model.addAttribute("precioMax", precioMax);

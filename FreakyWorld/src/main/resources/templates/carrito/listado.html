@@ -6,72 +6,108 @@
 
         <main>
             <section>
-                <h1>Carrito de compras</h1>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Carrito de compras</h1>
+                        <p class="texto-suave">Revisa, actualiza o elimina los productos de tu carrito.</p>
+                    </div>
+                </div>
 
-                <div th:if="${mensaje}">
+                <div th:if="${mensaje}" class="mensaje">
                     <p th:text="${mensaje}"></p>
                 </div>
 
-                <div th:if="${error}">
+                <div th:if="${error}" class="error">
                     <p th:text="${error}"></p>
                 </div>
 
-                <div th:if="${items == null or #lists.isEmpty(items)}">
+                <div th:if="${items == null or #lists.isEmpty(items)}" class="sin-datos">
                     <p>Tu carrito está vacío.</p>
                 </div>
 
                 <div th:if="${items != null and !#lists.isEmpty(items)}">
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>Imagen</th>
-                                <th>Producto</th>
-                                <th>Serie</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Subtotal</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="item : ${items}">
-                                <td>
-                                    <img th:if="${item.producto.imagen != null}"
-                                         th:src="${item.producto.imagen}"
-                                         alt="Imagen"
-                                         width="100">
-                                </td>
-                                <td th:text="${item.producto.nombre}">Producto</td>
-                                <td th:text="${item.producto.serie}">Serie</td>
-                                <td th:text="${item.producto.precio}">0.00</td>
-                                <td>
-                                    <form th:action="@{/carrito/actualizar}" method="post">
-                                        <input type="hidden" name="idProducto" th:value="${item.producto.idProducto}">
-                                        <input type="number" name="cantidad" th:value="${item.cantidad}" min="0" required>
-                                        <button type="submit">Actualizar</button>
-                                    </form>
-                                </td>
-                                <td th:text="${item.producto.precio * item.cantidad}">0.00</td>
-                                <td>
-                                    <a th:href="@{/carrito/eliminar/{id}(id=${item.producto.idProducto})}">
-                                        Eliminar
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="tabla-responsive">
+                        <table class="tabla-carrito">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${items}">
+                                    <td>
+                                        <img th:if="${item.producto.rutaImagen != null}"
+                                             th:src="${item.producto.rutaImagen}"
+                                             alt="Imagen"
+                                             class="miniatura-producto">
 
-                    <br>
+                                        <img th:if="${item.producto.rutaImagen == null}"
+                                             src="https://via.placeholder.com/100x100?text=Sin+imagen"
+                                             alt="Sin imagen"
+                                             class="miniatura-producto">
+                                    </td>
 
-                    <div>
-                        <strong>Total:</strong>
-                        <span th:text="${total}">0.00</span>
+                                    <td class="nombre-producto-tabla" th:text="${item.producto.nombre}">Producto</td>
+                                    <td>₡ <span th:text="${item.producto.precio}">0.00</span></td>
+
+                                    <td>
+                                        <form th:action="@{/carrito/actualizar}" method="post" class="form-cantidad">
+                                            <input type="hidden" name="idProducto" th:value="${item.producto.idProducto}">
+                                            <input type="number" name="cantidad" th:value="${item.cantidad}" min="0" required>
+                                            <button type="submit">Actualizar</button>
+                                        </form>
+                                    </td>
+
+                                    <td>₡ <span th:text="${item.producto.precio * item.cantidad}">0.00</span></td>
+
+                                    <td>
+                                        <a class="accion eliminar"
+                                           th:href="@{/carrito/eliminar/{id}(id=${item.producto.idProducto})}">
+                                            Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <br>
+                    <div class="resumen-carrito">
+                        <div class="total-carrito">
+                            <strong>Total:</strong>
+                            <span>₡ <span th:text="${total}">0.00</span></span>
+                        </div>
 
-                    <div>
-                        <a th:href="@{/carrito/vaciar}">Vaciar carrito</a>
+                        <div class="perfil-caja">
+                            <h2>Finalizar compra</h2>
+
+                            <form th:action="@{/carrito/pagar}" method="post">
+                                <div class="perfil-item">
+                                    <label class="perfil-etiqueta" for="metodoPago">Método de pago</label>
+                                    <select id="metodoPago" name="metodoPago" class="perfil-input" required>
+                                        <option value="">Seleccione un método</option>
+                                        <option value="Tarjeta">Tarjeta</option>
+                                        <option value="Sinpe Móvil">Sinpe Móvil</option>
+                                        <option value="Transferencia">Transferencia</option>
+                                        <option value="Efectivo contra entrega">Efectivo contra entrega</option>
+                                    </select>
+                                </div>
+
+                                <div class="carrito-acciones-finales">
+                                    <button type="submit" class="boton-principal">Pagar ahora</button>
+                                    <a class="boton-secundario" th:href="@{/carrito/items}">Ver detalle</a>
+                                    <a class="accion eliminar"
+                                       th:href="@{/carrito/vaciar}"
+                                       onclick="return confirm('¿Desea vaciar el carrito?');">
+                                        Vaciar carrito
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </section>
