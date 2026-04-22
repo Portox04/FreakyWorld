@@ -1,10 +1,10 @@
 package com.freakyworld.controller;
 
 import com.freakyworld.domain.Producto;
+import com.freakyworld.repository.ResenaRepository;
 import com.freakyworld.service.CategoriaService;
 import com.freakyworld.service.FirebaseStorageService;
 import com.freakyworld.service.ProductoService;
-import java.io.IOException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +23,16 @@ public class ProductoController {
     private final ProductoService productoService;
     private final CategoriaService categoriaService;
     private final FirebaseStorageService firebaseStorageService;
+    private final ResenaRepository resenaRepository;
 
     public ProductoController(ProductoService productoService,
                               CategoriaService categoriaService,
-                              FirebaseStorageService firebaseStorageService) {
+                              FirebaseStorageService firebaseStorageService,
+                              ResenaRepository resenaRepository) {
         this.productoService = productoService;
         this.categoriaService = categoriaService;
         this.firebaseStorageService = firebaseStorageService;
+        this.resenaRepository = resenaRepository;
     }
 
     @GetMapping("/listado")
@@ -38,19 +41,24 @@ public class ProductoController {
         return "producto/listado";
     }
 
-    @GetMapping("/ficha/{idProducto}")
-    public String ficha(@PathVariable Long idProducto, Model model,
-                        RedirectAttributes redirectAttributes) {
-        Producto producto = productoService.buscarPorId(idProducto).orElse(null);
+ @GetMapping("/ficha/{idProducto}")
+public String ficha(@PathVariable Long idProducto,
+                    @RequestParam(name = "origen", required = false, defaultValue = "productos") String origen,
+                    Model model,
+                    RedirectAttributes redirectAttributes) {
+    Producto producto = productoService.buscarPorId(idProducto).orElse(null);
 
-        if (producto == null) {
-            redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
-            return "redirect:/producto/listado";
-        }
-
-        model.addAttribute("producto", producto);
-        return "producto/ficha";
+    if (producto == null) {
+        redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
+        return "redirect:/producto/listado";
     }
+
+    model.addAttribute("producto", producto);
+    model.addAttribute("resenas", resenaRepository.findByProductoIdProducto(idProducto));
+    model.addAttribute("origen", origen);
+
+    return "producto/ficha";
+}
 
     @GetMapping("/modifica")
     public String nuevoProducto(Model model) {
@@ -84,7 +92,7 @@ public class ProductoController {
         try {
             if (imagenArchivo != null && !imagenArchivo.isEmpty()) {
                 String urlImagen = firebaseStorageService.cargarImagen(imagenArchivo);
-                producto.setImagen(urlImagen);
+                producto.setRutaImagen(urlImagen);
             }
 
             if (producto.getIdProducto() == null) {
@@ -98,8 +106,8 @@ public class ProductoController {
                     return "redirect:/producto/listado";
                 }
 
-                if ((imagenArchivo == null || imagenArchivo.isEmpty())) {
-                    producto.setImagen(productoActual.getImagen());
+                if (imagenArchivo == null || imagenArchivo.isEmpty()) {
+                    producto.setRutaImagen(productoActual.getRutaImagen());
                 }
 
                 productoService.actualizar(producto);
@@ -107,11 +115,10 @@ public class ProductoController {
             }
 
             return "redirect:/producto/listado";
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("error", "Error al subir la imagen");
-            return "redirect:/producto/listado";
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error al guardar producto: " + e.getMessage());
             return "redirect:/producto/listado";
         }
     }

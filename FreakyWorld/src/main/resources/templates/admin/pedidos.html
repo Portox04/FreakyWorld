@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Lista de pedidos')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Lista de pedidos</h1>
+                        <p class="texto-suave">Aquí el administrador puede revisar y cambiar el estado de los pedidos.</p>
+                    </div>
+                </div>
+
+                <!-- AQUI AGREGUE MENSAJES -->
+                <div th:if="${mensaje}" class="mensaje">
+                    <p th:text="${mensaje}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${pedidos == null or #lists.isEmpty(pedidos)}" class="sin-datos">
+                    <p>No hay pedidos registrados.</p>
+                </div>
+
+                <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" class="tabla-responsive">
+                    <table class="tabla-categorias">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Método de pago</th>
+                                <th>Estado actual</th>
+                                <th>Seguimiento</th>
+                                <th>Cambiar estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="pedido : ${pedidos}">
+                                <td th:text="${pedido.idFactura}">1</td>
+                                <td th:text="${pedido.usuario.nombre}">Usuario</td>
+                                <td th:text="${pedido.fechaPedido}">2026-03-07</td>
+                                <td th:text="${pedido.total}">0.00</td>
+                                <td th:text="${pedido.metodoPago}">Tarjeta</td>
+                                <td th:text="${pedido.estado}">PENDIENTE</td>
+                                <td th:text="${pedido.numeroSeguimiento} ?: 'Sin asignar'">Sin asignar</td>
+                                <td>
+                                    <!-- AQUI CAMBIE TODO A FORMULARIO CON GUARDAR -->
+                                    <form th:action="@{/admin/pedidos/actualizar/{idPedido}(idPedido=${pedido.idFactura})}" method="post" style="display:flex; gap:8px; align-items:center;">
+
+                                        <select name="estado" class="form-select">
+                                            <option value="PENDIENTE" th:selected="${pedido.estado == 'PENDIENTE'}">Pendiente</option>
+                                            <option value="PAGADO" th:selected="${pedido.estado == 'PAGADO'}">Pagado</option>
+                                            <option value="PREPARANDO" th:selected="${pedido.estado == 'PREPARANDO'}">Preparando</option>
+                                            <option value="ENVIADO" th:selected="${pedido.estado == 'ENVIADO'}">Enviado</option>
+                                            <option value="ENTREGADO" th:selected="${pedido.estado == 'ENTREGADO'}">Entregado</option>
+                                            <option value="CANCELADO" th:selected="${pedido.estado == 'CANCELADO'}">Cancelado</option>
+                                        </select>
+
+                                        <button type="submit" class="accion editar">
+                                            Guardar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

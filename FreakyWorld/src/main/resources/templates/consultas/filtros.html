@@ -15,11 +15,6 @@
                     </div>
 
                     <div>
-                        <label for="serie">Serie</label>
-                        <input type="text" id="serie" name="serie">
-                    </div>
-
-                    <div>
                         <label for="idCategoria">Categoría</label>
                         <select id="idCategoria" name="idCategoria">
                             <option value="">Todas</option>
@@ -56,13 +51,15 @@
                 <div th:if="${productos != null and !#lists.isEmpty(productos)}">
                     <div th:each="producto : ${productos}">
                         <div>
-                            <img th:if="${producto.imagen != null}"
-                                 th:src="${producto.imagen}"
+                            <img th:if="${producto.rutaImagen != null}"
+                                 th:src="${producto.rutaImagen}"
                                  alt="Imagen del producto"
                                  width="140">
 
                             <h3 th:text="${producto.nombre}">Nombre</h3>
-                            <p><strong>Serie:</strong> <span th:text="${producto.serie}">Serie</span></p>
+
+                            <!-- AQUI QUITE SERIE -->
+
                             <p><strong>Precio:</strong> <span th:text="${producto.precio}">0.00</span></p>
                             <p>
                                 <strong>Categoría:</strong>

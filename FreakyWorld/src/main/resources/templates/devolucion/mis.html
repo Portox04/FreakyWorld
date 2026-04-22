@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Mis devoluciones')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Mis devoluciones</h1>
+                        <p class="texto-suave">Consulta las solicitudes de devolución que has enviado.</p>
+                    </div>
+
+                    
+                        <a class="boton-volver" th:href="@{/usuario/perfil}">Volver al perfil</a>
+                    
+                </div>
+
+                <div th:if="${exito}" class="mensaje">
+                    <p th:text="${exito}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${devoluciones == null or #lists.isEmpty(devoluciones)}" class="sin-datos">
+                    <p>No has realizado solicitudes de devolución.</p>
+                </div>
+
+                <div th:if="${devoluciones != null and !#lists.isEmpty(devoluciones)}" class="tabla-responsive">
+                    <table class="tabla-productos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Factura</th>
+                                <th>Producto</th>
+                                <th>Motivo</th>
+                                <th>Descripción</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="devolucion : ${devoluciones}">
+                                <td th:text="${devolucion.idDevolucion}">1</td>
+                                <td th:text="${devolucion.factura.idFactura}">1</td>
+                                <td th:text="${devolucion.detalleFactura.producto.nombre}">Producto</td>
+                                <td th:text="${devolucion.motivo}">Motivo</td>
+                                <td th:text="${devolucion.descripcion != null and !#strings.isEmpty(devolucion.descripcion) ? devolucion.descripcion : 'Sin descripción'}">
+                                    Descripción
+                                </td>
+                                <td th:text="${devolucion.fechaSolicitud}">2026-03-07</td>
+                                <td>
+                                    <span class="estado activo"
+                                          th:if="${devolucion.estado == 'SOLICITADA'}"
+                                          th:text="${devolucion.estado}">SOLICITADA</span>
+
+                                    <span class="estado"
+                                          th:if="${devolucion.estado == 'EN REVISION'}"
+                                          th:text="${devolucion.estado}">EN REVISION</span>
+
+                                    <span class="estado activo"
+                                          th:if="${devolucion.estado == 'APROBADA'}"
+                                          th:text="${devolucion.estado}">APROBADA</span>
+
+                                    <span class="estado inactivo"
+                                          th:if="${devolucion.estado == 'RECHAZADA'}"
+                                          th:text="${devolucion.estado}">RECHAZADA</span>
+
+                                    <span th:if="${devolucion.estado != 'SOLICITADA' and devolucion.estado != 'EN REVISION' and devolucion.estado != 'APROBADA' and devolucion.estado != 'RECHAZADA'}"
+                                          th:text="${devolucion.estado}">ESTADO</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

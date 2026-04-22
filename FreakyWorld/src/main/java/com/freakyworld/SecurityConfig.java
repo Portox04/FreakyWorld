@@ -2,7 +2,6 @@ package com.freakyworld;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,23 +17,61 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/",
                     "/index",
+                    "/login",
                     "/registro/**",
                     "/css/**",
                     "/js/**",
-                    "/img/**"
+                    "/img/**",
+                    "/producto/listado",
+                    "/producto/ficha/**",
+                    "/consultas/filtros",
+                    "/consultas/listado"
                 ).permitAll()
-                .requestMatchers("/categoria/**", "/producto/modifica/**").hasAnyAuthority("ADMIN", "VENDEDOR")
-                .requestMatchers("/usuario/**", "/carrito/**").authenticated()
+
+                // Categorías: ADMIN y VENDEDOR pueden ver
+                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                // Categorías: cualquiera puede ver el listado
+                .requestMatchers("/categoria/listado").permitAll()
+
+// Categorías: solo ADMIN puede modificar
+                .requestMatchers("/categoria/crear").hasAuthority("ADMIN")
+                .requestMatchers("/categoria/guardar").hasAuthority("ADMIN")
+                .requestMatchers("/categoria/modifica/**").hasAuthority("ADMIN")
+                .requestMatchers("/categoria/eliminar/**").hasAuthority("ADMIN")
+
+                // Productos: solo ADMIN puede crear, guardar, editar y eliminar
+                .requestMatchers("/producto/modifica/**").hasAuthority("ADMIN")
+                .requestMatchers("/producto/guardar").hasAuthority("ADMIN")
+                .requestMatchers("/producto/eliminar/**").hasAuthority("ADMIN")
+
+                // Cliente: carrito, deseos, pedidos e interacciones de compra
+                .requestMatchers("/carrito/**").hasAuthority("CLIENTE")
+                .requestMatchers("/devolucion/**").hasAuthority("CLIENTE")
+                .requestMatchers("/usuario/deseos/**").hasAuthority("CLIENTE")
+                .requestMatchers("/usuario/pedidos/**").hasAuthority("CLIENTE")
+                .requestMatchers("/interaccion/deseos/**").hasAuthority("CLIENTE")
+                .requestMatchers("/interaccion/resena/**").hasAuthority("CLIENTE")
+
+                // Perfil: cualquier autenticado
+                .requestMatchers("/usuario/perfil/**").authenticated()
+
                 .anyRequest().authenticated()
             )
-            .formLogin(Customizer.withDefaults())
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error")
+                .permitAll()
+            )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
+                .permitAll()
             )
             .exceptionHandling(exception -> exception
                 .accessDeniedPage("/error/403"))
-            .csrf(Customizer.withDefaults());
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
