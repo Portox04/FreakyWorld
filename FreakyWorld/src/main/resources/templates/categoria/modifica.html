@@ -5,29 +5,43 @@
         <header th:replace="~{general/menu :: menu}"></header>
 
         <main>
-            <section>
-                <h1>Modificar categoría</h1>
+            <section class="categoria-form-seccion">
+                <div class="categoria-form-caja">
+                    <h1>Modificar categoría</h1>
+                    <p class="categoria-form-subtexto">Actualiza la información de la categoría.</p>
 
-                <form th:action="@{/categoria/guardar}" th:object="${categoria}" method="post">
-                    <input type="hidden" th:field="*{idCategoria}">
+                    <!-- AQUI AGREGUE enctype PARA ENVIAR IMAGEN -->
+                    <form th:action="@{/categoria/guardar}" th:object="${categoria}" method="post" enctype="multipart/form-data" class="categoria-formulario">
+                        <input type="hidden" th:field="*{idCategoria}">
 
-                    <div>
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" th:field="*{nombre}" required>
-                    </div>
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" required>
+                        </div>
 
-                    <div>
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
-                    </div>
+                        <div>
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+                        </div>
 
-                    <div>
-                        <button type="submit">Guardar cambios</button>
-                    </div>
-                </form>
+                        <!-- AQUI MUESTRO LA IMAGEN ACTUAL SI EXISTE -->
+                        <div th:if="${categoria.rutaImagen != null and !#strings.isEmpty(categoria.rutaImagen)}">
+                            <label>Imagen actual</label><br>
+                            <img th:src="${categoria.rutaImagen}" alt="Imagen de categoría" style="max-width: 200px; border-radius: 8px; margin-top: 8px;">
+                        </div>
 
-                <br>
-                <a th:href="@{/categoria/listado}">Volver al listado</a>
+                        <!-- AQUI AGREGUE EL CAMPO PARA CAMBIAR LA IMAGEN -->
+                        <div>
+                            <label for="imagen">Nueva imagen</label>
+                            <input type="file" id="imagen" name="imagen" accept="image/*">
+                        </div>
+
+                        <div class="categoria-form-botones">
+                            <button type="submit">Guardar cambios</button>
+                            <a class="boton-volver" th:href="@{/categoria/listado}">Volver a categorías</a>
+                        </div>
+                    </form>
+                </div>
             </section>
         </main>
 

@@ -85,40 +85,47 @@ public class InteraccionController {
         return "redirect:/usuario/deseos";
     }
 
-    @PostMapping("/resena/guardar")
-    public String guardarResena(@RequestParam Long idProducto,
-                                @RequestParam Integer calificacion,
-                                @RequestParam(required = false) String comentario,
-                                Principal principal,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            Usuario usuario = obtenerUsuario(principal);
-            Producto producto = obtenerProducto(idProducto);
+   @PostMapping("/resena/guardar")
+public String guardarResena(@RequestParam Long idProducto,
+                            @RequestParam Integer calificacion,
+                            @RequestParam(required = false) String comentario,
+                            Principal principal,
+                            RedirectAttributes redirectAttributes) {
+    try {
+        System.out.println("ENTRO A GUARDAR RESENA");
+        System.out.println("idProducto = " + idProducto);
+        System.out.println("calificacion = " + calificacion);
+        System.out.println("comentario = " + comentario);
 
-            if (calificacion == null || calificacion < 1 || calificacion > 5) {
-                throw new RuntimeException("La calificación debe estar entre 1 y 5");
-            }
+        Usuario usuario = obtenerUsuario(principal);
+        Producto producto = obtenerProducto(idProducto);
 
-            Resena resena = resenaRepository
-                    .findByUsuarioIdUsuario(usuario.getIdUsuario()).stream()
-                    .filter(r -> r.getProducto().getIdProducto().equals(idProducto))
-                    .findFirst()
-                    .orElse(new Resena());
+        System.out.println("usuario = " + usuario.getIdUsuario());
+        System.out.println("producto = " + producto.getIdProducto());
 
-            resena.setUsuario(usuario);
-            resena.setProducto(producto);
-            resena.setCalificacion(calificacion);
-            resena.setComentario(comentario);
-
-            resenaRepository.save(resena);
-            redirectAttributes.addFlashAttribute("mensaje", "Reseña guardada correctamente");
-
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        if (calificacion == null || calificacion < 1 || calificacion > 5) {
+            throw new RuntimeException("La calificación debe estar entre 1 y 5");
         }
 
-        return "redirect:/producto/ficha/" + idProducto;
+        Resena resena = new Resena();
+        resena.setUsuario(usuario);
+        resena.setProducto(producto);
+        resena.setCalificacion(calificacion);
+        resena.setComentario(comentario);
+
+        resenaRepository.save(resena);
+
+        System.out.println("RESENA GUARDADA, ID = " + resena.getIdResena());
+
+        redirectAttributes.addFlashAttribute("mensaje", "Reseña guardada correctamente");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        redirectAttributes.addFlashAttribute("error", "Error al guardar reseña: " + e.getMessage());
     }
+
+    return "redirect:/producto/ficha/" + idProducto;
+}
 
     private Usuario obtenerUsuario(Principal principal) {
         if (principal == null) {

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Factura de compra')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Factura de compra</h1>
+                        <p class="texto-suave">Resumen completo de la compra realizada.</p>
+                    </div>
+
+                    <div class="carrito-acciones-finales" th:if="${factura != null}">
+                        <a class="boton-secundario" th:href="@{/usuario/pedidos}">Volver a pedidos</a>
+                        <a class="boton-principal"
+                           th:href="@{/carrito/factura/{idFactura}/pdf(idFactura=${factura.idFactura})}">
+                            Descargar PDF
+                        </a>
+                        <a class="boton-secundario"
+                           th:href="@{/devolucion/nueva/{idFactura}(idFactura=${factura.idFactura})}">
+                            Solicitar devolución
+                        </a>
+                    </div>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${factura != null}" class="perfil-caja">
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Número de factura</span>
+                        <span class="perfil-valor" th:text="${factura.idFactura}">1</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Fecha</span>
+                        <span class="perfil-valor" th:text="${factura.fechaPedido}">2026-03-07</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Estado</span>
+                        <span class="perfil-valor" th:text="${factura.estado}">PENDIENTE</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Método de pago</span>
+                        <span class="perfil-valor" th:text="${factura.metodoPago}">Tarjeta</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Número de seguimiento</span>
+                        <span class="perfil-valor"
+                              th:text="${factura.numeroSeguimiento != null ? factura.numeroSeguimiento : 'Sin asignar'}">
+                            PED-123
+                        </span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Cliente</span>
+                        <span class="perfil-valor" th:text="${factura.usuario.nombre}">Cliente</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Correo</span>
+                        <span class="perfil-valor" th:text="${factura.usuario.correo}">correo@ejemplo.com</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Dirección</span>
+                        <span class="perfil-valor"
+                              th:text="${factura.usuario.direccion != null and !#strings.isEmpty(factura.usuario.direccion) ? factura.usuario.direccion : 'Sin dirección registrada'}">
+                            Dirección
+                        </span>
+                    </div>
+                </div>
+
+                <div class="perfil-caja">
+                    <h2>Detalle de productos</h2>
+
+                    <div th:if="${detalles == null or #lists.isEmpty(detalles)}" class="sin-datos">
+                        <p>No hay detalles registrados para esta factura.</p>
+                    </div>
+
+                    <div th:if="${detalles != null and !#lists.isEmpty(detalles)}" class="tabla-responsive">
+                        <table class="tabla-productos">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio unitario</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="detalle : ${detalles}">
+                                    <td>
+                                        <img th:if="${detalle.producto.rutaImagen != null}"
+                                             th:src="${detalle.producto.rutaImagen}"
+                                             alt="Imagen del producto"
+                                             class="miniatura-producto">
+
+                                        <img th:if="${detalle.producto.rutaImagen == null}"
+                                             src="https://via.placeholder.com/100x100?text=Sin+imagen"
+                                             alt="Sin imagen"
+                                             class="miniatura-producto">
+                                    </td>
+
+                                    <td th:text="${detalle.producto.nombre}">Producto</td>
+                                    <td th:text="${detalle.cantidad}">1</td>
+                                    <td>₡ <span th:text="${detalle.precioUnitario}">0.00</span></td>
+                                    <td>₡ <span th:text="${detalle.subtotal}">0.00</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div th:if="${factura != null}" class="perfil-caja">
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Subtotal</span>
+                        <span class="perfil-valor">₡ <span th:text="${factura.subtotal != null ? factura.subtotal : factura.total}">0.00</span></span>
+                    </div>
+
+                    <div class="perfil-item" th:if="${factura.codigoCupon != null and !#strings.isEmpty(factura.codigoCupon)}">
+                        <span class="perfil-etiqueta">Cupón aplicado</span>
+                        <span class="perfil-valor" th:text="${factura.codigoCupon}">DESCUENTO10</span>
+                    </div>
+
+                    <div class="perfil-item" th:if="${factura.descuentoAplicado != null and factura.descuentoAplicado > 0}">
+                        <span class="perfil-etiqueta">Descuento aplicado</span>
+                        <span class="perfil-valor">₡ <span th:text="${factura.descuentoAplicado}">0.00</span></span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Total pagado</span>
+                        <span class="perfil-valor">₡ <span th:text="${factura.total}">0.00</span></span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

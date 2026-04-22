@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/layout :: head('Roles de usuario')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Roles del usuario</h1>
+                        <p class="texto-suave">Asigna o quita roles al usuario seleccionado.</p>
+                    </div>
+
+                    <div>
+                        <a class="boton-secundario" th:href="@{/admin/listado}">Volver a Roles</a>
+                    </div>
+                </div>
+
+                <div th:if="${exito}" class="mensaje">
+                    <p th:text="${exito}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div class="perfil-caja" th:if="${usuario != null}">
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">ID</span>
+                        <span class="perfil-valor" th:text="${usuario.idUsuario}">1</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Nombre</span>
+                        <span class="perfil-valor" th:text="${usuario.nombre}">Nombre</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Correo</span>
+                        <span class="perfil-valor" th:text="${usuario.correo}">correo@ejemplo.com</span>
+                    </div>
+
+                    <div class="perfil-item">
+                        <span class="perfil-etiqueta">Activo</span>
+                        <span class="perfil-valor" th:text="${usuario.activo ? 'Sí' : 'No'}">Sí</span>
+                    </div>
+                </div>
+
+                <div class="perfil-caja">
+                    <h2>Asignar rol</h2>
+
+                    <form th:action="@{/admin/roles/asignar}" method="post">
+                        <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}">
+
+                        <div class="perfil-item">
+                            <label class="perfil-etiqueta" for="idRol">Rol</label>
+                            <select id="idRol" name="idRol" class="perfil-input" required>
+                                <option value="">Seleccione un rol</option>
+                                <option th:each="rol : ${roles}"
+                                        th:value="${rol.idRol}"
+                                        th:text="${rol.nombre}">
+                                    Rol
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="perfil-acciones">
+                            <button type="submit" class="boton-principal">Asignar rol</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="perfil-caja">
+                    <h2>Roles asignados</h2>
+
+                    <div th:if="${usuarioRoles == null or #lists.isEmpty(usuarioRoles)}" class="sin-datos">
+                        <p>Este usuario no tiene roles asignados.</p>
+                    </div>
+
+                    <div th:if="${usuarioRoles != null and !#lists.isEmpty(usuarioRoles)}" class="tabla-responsive">
+                        <table class="tabla-productos">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Rol</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="usuarioRol : ${usuarioRoles}">
+                                    <td th:text="${usuarioRol.rol.idRol}">1</td>
+                                    <td th:text="${usuarioRol.rol.nombre}">CLIENTE</td>
+                                    <td>
+                                        <form th:action="@{/admin/roles/quitar}" method="post"
+                                              onsubmit="return confirm('¿Desea quitar este rol?');">
+                                            <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}">
+                                            <input type="hidden" name="idRol" th:value="${usuarioRol.rol.idRol}">
+                                            <button type="submit" class="accion eliminar">Quitar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

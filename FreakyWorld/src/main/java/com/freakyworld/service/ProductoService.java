@@ -37,10 +37,7 @@ public class ProductoService {
         return productoRepository.findByNombreContainingIgnoreCase(nombre);
     }
 
-    @Transactional(readOnly = true)
-    public List<Producto> buscarPorSerie(String serie) {
-        return productoRepository.findBySerieContainingIgnoreCase(serie);
-    }
+    
 
     @Transactional(readOnly = true)
     public List<Producto> buscarPorCategoria(Long idCategoria) {
@@ -66,11 +63,11 @@ public class ProductoService {
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
         productoActual.setNombre(producto.getNombre());
-        productoActual.setSerie(producto.getSerie());
+       
         productoActual.setDescripcion(producto.getDescripcion());
         productoActual.setPrecio(producto.getPrecio());
         productoActual.setStock(producto.getStock());
-        productoActual.setImagen(producto.getImagen());
+        productoActual.setRutaImagen(producto.getRutaImagen());
         productoActual.setCategoria(producto.getCategoria());
         productoActual.setActivo(producto.getActivo());
 

@@ -9,6 +9,14 @@
             <section class="detalle-producto">
                 <h1>Detalle del producto</h1>
 
+                <div th:if="${mensaje}" id="alerta-exito" class="mensaje" style="margin-bottom: 18px;">
+                    <p th:text="${mensaje}"></p>
+                </div>
+
+                <div th:if="${error}" id="alerta-error" class="error" style="margin-bottom: 18px;">
+                    <p th:text="${error}"></p>
+                </div>
+
                 <div th:if="${producto != null}" class="detalle-contenedor">
                     <div class="detalle-imagen-bloque">
                         <img th:if="${producto.rutaImagen != null}"
@@ -110,6 +118,33 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="detalle-recomendados" th:if="${recomendados != null and !#lists.isEmpty(recomendados)}">
+                        <div class="recomendados-encabezado">
+                            <h3>Recomendados</h3>
+
+                            <div class="recomendados-controles">
+                                <button type="button" class="boton-carrusel" onclick="moverRecomendados(-1)">&#10094;</button>
+                                <button type="button" class="boton-carrusel" onclick="moverRecomendados(1)">&#10095;</button>
+                            </div>
+                        </div>
+
+                        <div class="recomendados-carrusel" id="contenedorRecomendados">
+                            <div class="recomendado-item" th:each="recomendado : ${recomendados}">
+                                <a th:href="@{/producto/ficha/{idProducto}(idProducto=${recomendado.idProducto},origen='productos')}" class="recomendado-enlace">
+                                    <img th:if="${recomendado.rutaImagen != null}"
+                                         th:src="${recomendado.rutaImagen}"
+                                         alt="Imagen recomendada"
+                                         class="recomendado-imagen">
+
+                                    <div class="recomendado-info">
+                                        <h4 th:text="${recomendado.nombre}">Nombre</h4>
+                                        <p class="recomendado-precio">₡<span th:text="${recomendado.precio}">0.00</span></p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div th:if="${producto == null}" class="sin-datos">
@@ -132,5 +167,32 @@
         </main>
 
         <footer th:replace="~{general/footer :: footer}"></footer>
+
+        <script>
+            function moverRecomendados(direccion) {
+                const contenedor = document.getElementById("contenedorRecomendados");
+                const distancia = 280;
+                contenedor.scrollLeft += direccion * distancia;
+            }
+
+            const alertaExito = document.getElementById("alerta-exito");
+            const alertaError = document.getElementById("alerta-error");
+
+            if (alertaExito) {
+                setTimeout(() => {
+                    alertaExito.style.transition = "opacity 0.5s ease";
+                    alertaExito.style.opacity = "0";
+                    setTimeout(() => alertaExito.remove(), 500);
+                }, 2500);
+            }
+
+            if (alertaError) {
+                setTimeout(() => {
+                    alertaError.style.transition = "opacity 0.5s ease";
+                    alertaError.style.opacity = "0";
+                    setTimeout(() => alertaError.remove(), 500);
+                }, 3000);
+            }
+        </script>
     </body>
 </html>

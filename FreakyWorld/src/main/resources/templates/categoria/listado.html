@@ -1,55 +1,77 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:replace="~{general/layout :: head('Listado de categorías')}"></head>
     <body>
         <header th:replace="~{general/menu :: menu}"></header>
 
         <main>
             <section>
-                <h1>Listado de categorías</h1>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Listado de categorías</h1>
+                        <p class="texto-suave">Administra las categorías registradas en la tienda.</p>
+                    </div>
 
-                <div th:if="${mensaje}">
+                    <div sec:authorize="hasAuthority('ADMIN')">
+                        <a class="boton-principal" th:href="@{/categoria/crear}">Nueva categoría</a>
+                    </div>
+                </div>
+
+                <div th:if="${mensaje}" class="mensaje">
                     <p th:text="${mensaje}"></p>
                 </div>
 
-                <div th:if="${error}">
+                <div th:if="${error}" class="error">
                     <p th:text="${error}"></p>
                 </div>
 
-                <div th:if="${categorias == null or #lists.isEmpty(categorias)}">
+                <div th:if="${categorias == null or #lists.isEmpty(categorias)}" class="sin-datos">
                     <p>No hay categorías registradas.</p>
                 </div>
 
-                <div th:if="${categorias != null and !#lists.isEmpty(categorias)}">
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="categoria : ${categorias}">
-                                <td th:text="${categoria.idCategoria}">1</td>
-                                <td th:text="${categoria.nombre}">Nombre</td>
-                                <td th:text="${categoria.descripcion}">Descripción</td>
-                                <td>
-                                    <a th:href="@{/categoria/modifica/{id}(id=${categoria.idCategoria})}">Editar</a>
-                                    |
-                                    <a th:href="@{/categoria/eliminar/{id}(id=${categoria.idCategoria})}"
-                                       onclick="return confirm('¿Desea eliminar esta categoría?');">
-                                        Eliminar
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div th:if="${categorias != null and !#lists.isEmpty(categorias)}" class="lista-categorias">
+                    <article class="item-categoria" th:each="categoria : ${categorias}">
+                        
+                        <div class="categoria-imagen-bloque">
+                            <img th:if="${categoria.rutaImagen != null and !#strings.isEmpty(categoria.rutaImagen)}"
+                                 th:src="${categoria.rutaImagen}"
+                                 alt="Imagen de categoría"
+                                 class="categoria-imagen">
 
-                <br>
-                <a th:href="@{/categoria/crear}">Nueva categoría</a>
+                            <div th:if="${categoria.rutaImagen == null or #strings.isEmpty(categoria.rutaImagen)}"
+                                 class="categoria-sin-imagen">
+                                Sin imagen
+                            </div>
+                        </div>
+
+                        <div class="categoria-contenido">
+                            <p class="categoria-id">
+                                ID: <span th:text="${categoria.idCategoria}">1</span>
+                            </p>
+
+                            <h2 class="categoria-titulo" th:text="${categoria.nombre}">Nombre</h2>
+
+                            <p class="categoria-descripcion"
+                               th:text="${categoria.descripcion != null and !#strings.isEmpty(categoria.descripcion) ? categoria.descripcion : 'Sin descripción'}">
+                                Descripción
+                            </p>
+                        </div>
+
+                        <div class="categoria-acciones-admin" sec:authorize="hasAuthority('ADMIN')">
+                            <a class="accion editar"
+                               th:href="@{/categoria/modifica/{id}(id=${categoria.idCategoria})}">
+                                Editar
+                            </a>
+
+                            <a class="accion eliminar"
+                               th:href="@{/categoria/eliminar/{id}(id=${categoria.idCategoria})}"
+                               onclick="return confirm('¿Desea eliminar esta categoría?');">
+                                Eliminar
+                            </a>
+                        </div>
+                    </article>
+                </div>
             </section>
         </main>
 

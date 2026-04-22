@@ -25,8 +25,7 @@ public class Producto implements Serializable {
     @Column(name = "nombre", nullable = false, length = 150)
     private String nombre;
 
-    @Column(name = "serie", length = 100)
-    private String serie;
+    
 
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
@@ -37,8 +36,8 @@ public class Producto implements Serializable {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Column(name = "imagen", length = 255)
-    private String imagen;
+   @Column(name = "ruta_imagen", length = 1024)
+private String rutaImagen;
 
     @ManyToOne
     @JoinColumn(name = "id_categoria")

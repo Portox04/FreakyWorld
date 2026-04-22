@@ -25,6 +25,15 @@ public class Factura implements Serializable {
     @Column(name = "fecha_pedido", insertable = false, updatable = false)
     private LocalDateTime fechaPedido;
 
+    @Column(name = "subtotal", precision = 10, scale = 2)
+    private BigDecimal subtotal;
+
+    @Column(name = "descuento_aplicado", precision = 10, scale = 2)
+    private BigDecimal descuentoAplicado;
+
+    @Column(name = "codigo_cupon", length = 50)
+    private String codigoCupon;
+
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 

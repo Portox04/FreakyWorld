@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/layout :: head('Modificar cupón')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section class="categoria-form-seccion">
+                <div class="categoria-form-caja">
+                    <h1 th:text="${cupon.idCupon == null} ? 'Nuevo cupón' : 'Modificar cupón'">Modificar cupón</h1>
+                    <p class="categoria-form-subtexto">Actualiza la información del cupón promocional.</p>
+
+                    <form th:action="@{/admin/cupones/guardar}" th:object="${cupon}" method="post" class="categoria-formulario">
+                        <input type="hidden" th:field="*{idCupon}">
+
+                        <div>
+                            <label for="codigo">Código</label>
+                            <input type="text" id="codigo" th:field="*{codigo}" required maxlength="50">
+                        </div>
+
+                        <div>
+                            <label for="descuento">Descuento (%)</label>
+                            <input type="number" id="descuento" th:field="*{descuento}" min="1" max="100" step="0.01" required>
+                        </div>
+
+                        <div>
+                            <label for="activo">Estado</label>
+                            <select id="activo" th:field="*{activo}">
+                                <option th:value="true">Activo</option>
+                                <option th:value="false">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <div class="categoria-form-botones">
+                            <button type="submit">Guardar cambios</button>
+                            <a class="boton-volver" th:href="@{/admin/cupones/listado}">Volver a cupones</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>

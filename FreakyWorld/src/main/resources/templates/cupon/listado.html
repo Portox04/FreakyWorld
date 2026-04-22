@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/layout :: head('Listado de cupones')}"></head>
+    <body>
+        <header th:replace="~{general/menu :: menu}"></header>
+
+        <main>
+            <section>
+                <div class="encabezado-seccion">
+                    <div>
+                        <h1>Listado de cupones</h1>
+                        <p class="texto-suave">Administra los cupones promocionales registrados en la tienda.</p>
+                    </div>
+
+                    <div sec:authorize="hasAuthority('ADMIN')">
+                        <a class="boton-principal" th:href="@{/admin/cupones/nuevo}">Nuevo cupón</a>
+                    </div>
+                </div>
+
+                <div th:if="${mensaje}" class="mensaje">
+                    <p th:text="${mensaje}"></p>
+                </div>
+
+                <div th:if="${error}" class="error">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <div th:if="${cupones == null or #lists.isEmpty(cupones)}" class="sin-datos">
+                    <p>No hay cupones registrados.</p>
+                </div>
+
+                <div th:if="${cupones != null and !#lists.isEmpty(cupones)}" class="lista-categorias">
+                    <article class="item-categoria" th:each="cupon : ${cupones}">
+                        <div class="categoria-imagen-bloque">
+                            <div class="categoria-sin-imagen">
+                                CUPÓN
+                            </div>
+                        </div>
+
+                        <div class="categoria-contenido">
+                            <p class="categoria-id">
+                                ID: <span th:text="${cupon.idCupon}">1</span>
+                            </p>
+
+                            <h2 class="categoria-titulo" th:text="${cupon.codigo}">DESCUENTO10</h2>
+
+                            <p class="categoria-descripcion">
+                                Descuento:
+                                <strong><span th:text="${cupon.descuento}">10.00</span>%</strong>
+                            </p>
+
+                            <p class="categoria-descripcion">
+                                Estado:
+                                <span th:text="${cupon.activo ? 'Activo' : 'Inactivo'}">Activo</span>
+                            </p>
+                        </div>
+
+                        <div class="categoria-acciones-admin" sec:authorize="hasAuthority('ADMIN')">
+                            <a class="accion editar"
+                               th:href="@{/admin/cupones/modifica/{id}(id=${cupon.idCupon})}">
+                                Editar
+                            </a>
+
+                            <a th:class="${cupon.activo} ? 'accion eliminar' : 'accion ver'"
+                               th:href="@{/admin/cupones/estado/{id}(id=${cupon.idCupon})}"
+                               th:text="${cupon.activo} ? 'Desactivar' : 'Activar'">
+                                Estado
+                            </a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{general/footer :: footer}"></footer>
+    </body>
+</html>
